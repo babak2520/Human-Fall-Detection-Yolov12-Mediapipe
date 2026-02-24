@@ -30,6 +30,10 @@ def parse_arguments():
     parser.add_argument('--angle-threshold', type=float, default=45,
                       help='Threshold for body angle in degrees (0-90)')
     
+    # Display options
+    parser.add_argument('--no-display', action='store_true',
+                      help='Suppress video display window (for headless / automated runs)')
+
     # Output options
     parser.add_argument('--save-falls', action='store_true',
                       help='Save frames when falls are detected')
@@ -108,7 +112,8 @@ def run_cli_mode(args):
     active_falls = set()  # Track currently fallen people by ID
     total_falls = 0       # Count of total unique falls
     
-    print("Press 'q' to quit, 's' to save current frame")
+    if not args.no_display:
+        print("Press 'q' to quit, 's' to save current frame")
     
     try:
         while cap.isOpened():
@@ -164,16 +169,17 @@ def run_cli_mode(args):
                     fall_type = fall_data["fall_type"] or "unknown type"
                     print(f"\nFALL DETECTED: {fall_type}")
             
-            # Display the output frame
-            cv2.imshow('Fall Detection', output_frame)
-            
-            # Handle keyboard commands
-            key = cv2.waitKey(1) & 0xFF
-            if key == ord('q'):
-                break
-            elif key == ord('s'):
-                saved_path = save_frame(output_frame, args.output_dir, "manual_save")
-                print(f"\nFrame saved to: {saved_path}")
+            if not args.no_display:
+                # Display the output frame
+                cv2.imshow('Fall Detection', output_frame)
+                
+                # Handle keyboard commands
+                key = cv2.waitKey(1) & 0xFF
+                if key == ord('q'):
+                    break
+                elif key == ord('s'):
+                    saved_path = save_frame(output_frame, args.output_dir, "manual_save")
+                    print(f"\nFrame saved to: {saved_path}")
     
     except KeyboardInterrupt:
         print("\nDetection stopped by user")
@@ -185,7 +191,10 @@ def run_cli_mode(args):
         # Release resources
         print("\nReleasing resources...")
         cap.release()
-        cv2.destroyAllWindows()
+        if not args.no_display:
+            cv2.destroyAllWindows()
+        # Machine-readable result line for automated experiment runners
+        print(f"===RESULT=== total_falls={total_falls}")
 
 def main():
     """Main entry point for the application."""

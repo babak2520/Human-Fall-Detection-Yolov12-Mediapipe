@@ -1,3 +1,12 @@
 fall_snapshots/
 fall_snapshots/*
 
+__pycache__/
+.venv/
+examples/
+
+yolov12m.pt
+ yolov12n.pt
+ yolov12n1.pt
+ yolov8n.pt
+

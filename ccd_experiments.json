@@ -1,0 +1,1015 @@
+{
+  "design_info": {
+    "type": "Central Composite Design (CCD)",
+    "n_factors": 3,
+    "alpha": 1.1,
+    "n_center_points": 3,
+    "n_factorial_points": 8,
+    "n_axial_points": 6,
+    "total_runs_per_model": 17,
+    "total_models": 3,
+    "total_runs": 51,
+    "factors": {
+      "conf": {
+        "cli_arg": "--conf",
+        "low": 0.3,
+        "high": 0.7,
+        "description": "Detection confidence threshold (0\u20131)"
+      },
+      "fall_threshold": {
+        "cli_arg": "--fall-threshold",
+        "low": 0.2,
+        "high": 0.6,
+        "description": "Fall detection sensitivity threshold (0\u20131)"
+      },
+      "angle_threshold": {
+        "cli_arg": "--angle-threshold",
+        "low": 30,
+        "high": 60,
+        "description": "Angle threshold in degrees"
+      }
+    },
+    "models": [
+      "yolov12n.pt",
+      "yolov12n1.pt",
+      "yolov8n.pt"
+    ]
+  },
+  "experiments": {
+    "yolov12n.pt": [
+      {
+        "experiment_id": 1,
+        "point_type": "factorial",
+        "coded_levels": {
+          "conf": -1,
+          "fall_threshold": -1,
+          "angle_threshold": -1
+        },
+        "actual_levels": {
+          "conf": 0.3,
+          "fall_threshold": 0.2,
+          "angle_threshold": 30.0
+        },
+        "cli_args": {
+          "--conf": 0.3,
+          "--fall-threshold": 0.2,
+          "--angle-threshold": 30.0
+        }
+      },
+      {
+        "experiment_id": 2,
+        "point_type": "factorial",
+        "coded_levels": {
+          "conf": -1,
+          "fall_threshold": -1,
+          "angle_threshold": 1
+        },
+        "actual_levels": {
+          "conf": 0.3,
+          "fall_threshold": 0.2,
+          "angle_threshold": 60.0
+        },
+        "cli_args": {
+          "--conf": 0.3,
+          "--fall-threshold": 0.2,
+          "--angle-threshold": 60.0
+        }
+      },
+      {
+        "experiment_id": 3,
+        "point_type": "factorial",
+        "coded_levels": {
+          "conf": -1,
+          "fall_threshold": 1,
+          "angle_threshold": -1
+        },
+        "actual_levels": {
+          "conf": 0.3,
+          "fall_threshold": 0.6,
+          "angle_threshold": 30.0
+        },
+        "cli_args": {
+          "--conf": 0.3,
+          "--fall-threshold": 0.6,
+          "--angle-threshold": 30.0
+        }
+      },
+      {
+        "experiment_id": 4,
+        "point_type": "factorial",
+        "coded_levels": {
+          "conf": -1,
+          "fall_threshold": 1,
+          "angle_threshold": 1
+        },
+        "actual_levels": {
+          "conf": 0.3,
+          "fall_threshold": 0.6,
+          "angle_threshold": 60.0
+        },
+        "cli_args": {
+          "--conf": 0.3,
+          "--fall-threshold": 0.6,
+          "--angle-threshold": 60.0
+        }
+      },
+      {
+        "experiment_id": 5,
+        "point_type": "factorial",
+        "coded_levels": {
+          "conf": 1,
+          "fall_threshold": -1,
+          "angle_threshold": -1
+        },
+        "actual_levels": {
+          "conf": 0.7,
+          "fall_threshold": 0.2,
+          "angle_threshold": 30.0
+        },
+        "cli_args": {
+          "--conf": 0.7,
+          "--fall-threshold": 0.2,
+          "--angle-threshold": 30.0
+        }
+      },
+      {
+        "experiment_id": 6,
+        "point_type": "factorial",
+        "coded_levels": {
+          "conf": 1,
+          "fall_threshold": -1,
+          "angle_threshold": 1
+        },
+        "actual_levels": {
+          "conf": 0.7,
+          "fall_threshold": 0.2,
+          "angle_threshold": 60.0
+        },
+        "cli_args": {
+          "--conf": 0.7,
+          "--fall-threshold": 0.2,
+          "--angle-threshold": 60.0
+        }
+      },
+      {
+        "experiment_id": 7,
+        "point_type": "factorial",
+        "coded_levels": {
+          "conf": 1,
+          "fall_threshold": 1,
+          "angle_threshold": -1
+        },
+        "actual_levels": {
+          "conf": 0.7,
+          "fall_threshold": 0.6,
+          "angle_threshold": 30.0
+        },
+        "cli_args": {
+          "--conf": 0.7,
+          "--fall-threshold": 0.6,
+          "--angle-threshold": 30.0
+        }
+      },
+      {
+        "experiment_id": 8,
+        "point_type": "factorial",
+        "coded_levels": {
+          "conf": 1,
+          "fall_threshold": 1,
+          "angle_threshold": 1
+        },
+        "actual_levels": {
+          "conf": 0.7,
+          "fall_threshold": 0.6,
+          "angle_threshold": 60.0
+        },
+        "cli_args": {
+          "--conf": 0.7,
+          "--fall-threshold": 0.6,
+          "--angle-threshold": 60.0
+        }
+      },
+      {
+        "experiment_id": 9,
+        "point_type": "axial",
+        "coded_levels": {
+          "conf": -1.1,
+          "fall_threshold": 0.0,
+          "angle_threshold": 0.0
+        },
+        "actual_levels": {
+          "conf": 0.28,
+          "fall_threshold": 0.4,
+          "angle_threshold": 45.0
+        },
+        "cli_args": {
+          "--conf": 0.28,
+          "--fall-threshold": 0.4,
+          "--angle-threshold": 45.0
+        }
+      },
+      {
+        "experiment_id": 10,
+        "point_type": "axial",
+        "coded_levels": {
+          "conf": 1.1,
+          "fall_threshold": 0.0,
+          "angle_threshold": 0.0
+        },
+        "actual_levels": {
+          "conf": 0.72,
+          "fall_threshold": 0.4,
+          "angle_threshold": 45.0
+        },
+        "cli_args": {
+          "--conf": 0.72,
+          "--fall-threshold": 0.4,
+          "--angle-threshold": 45.0
+        }
+      },
+      {
+        "experiment_id": 11,
+        "point_type": "axial",
+        "coded_levels": {
+          "conf": 0.0,
+          "fall_threshold": -1.1,
+          "angle_threshold": 0.0
+        },
+        "actual_levels": {
+          "conf": 0.5,
+          "fall_threshold": 0.18,
+          "angle_threshold": 45.0
+        },
+        "cli_args": {
+          "--conf": 0.5,
+          "--fall-threshold": 0.18,
+          "--angle-threshold": 45.0
+        }
+      },
+      {
+        "experiment_id": 12,
+        "point_type": "axial",
+        "coded_levels": {
+          "conf": 0.0,
+          "fall_threshold": 1.1,
+          "angle_threshold": 0.0
+        },
+        "actual_levels": {
+          "conf": 0.5,
+          "fall_threshold": 0.62,
+          "angle_threshold": 45.0
+        },
+        "cli_args": {
+          "--conf": 0.5,
+          "--fall-threshold": 0.62,
+          "--angle-threshold": 45.0
+        }
+      },
+      {
+        "experiment_id": 13,
+        "point_type": "axial",
+        "coded_levels": {
+          "conf": 0.0,
+          "fall_threshold": 0.0,
+          "angle_threshold": -1.1
+        },
+        "actual_levels": {
+          "conf": 0.5,
+          "fall_threshold": 0.4,
+          "angle_threshold": 28.5
+        },
+        "cli_args": {
+          "--conf": 0.5,
+          "--fall-threshold": 0.4,
+          "--angle-threshold": 28.5
+        }
+      },
+      {
+        "experiment_id": 14,
+        "point_type": "axial",
+        "coded_levels": {
+          "conf": 0.0,
+          "fall_threshold": 0.0,
+          "angle_threshold": 1.1
+        },
+        "actual_levels": {
+          "conf": 0.5,
+          "fall_threshold": 0.4,
+          "angle_threshold": 61.5
+        },
+        "cli_args": {
+          "--conf": 0.5,
+          "--fall-threshold": 0.4,
+          "--angle-threshold": 61.5
+        }
+      },
+      {
+        "experiment_id": 15,
+        "point_type": "center",
+        "coded_levels": {
+          "conf": 0.0,
+          "fall_threshold": 0.0,
+          "angle_threshold": 0.0
+        },
+        "actual_levels": {
+          "conf": 0.5,
+          "fall_threshold": 0.4,
+          "angle_threshold": 45.0
+        },
+        "cli_args": {
+          "--conf": 0.5,
+          "--fall-threshold": 0.4,
+          "--angle-threshold": 45.0
+        }
+      },
+      {
+        "experiment_id": 16,
+        "point_type": "center",
+        "coded_levels": {
+          "conf": 0.0,
+          "fall_threshold": 0.0,
+          "angle_threshold": 0.0
+        },
+        "actual_levels": {
+          "conf": 0.5,
+          "fall_threshold": 0.4,
+          "angle_threshold": 45.0
+        },
+        "cli_args": {
+          "--conf": 0.5,
+          "--fall-threshold": 0.4,
+          "--angle-threshold": 45.0
+        }
+      },
+      {
+        "experiment_id": 17,
+        "point_type": "center",
+        "coded_levels": {
+          "conf": 0.0,
+          "fall_threshold": 0.0,
+          "angle_threshold": 0.0
+        },
+        "actual_levels": {
+          "conf": 0.5,
+          "fall_threshold": 0.4,
+          "angle_threshold": 45.0
+        },
+        "cli_args": {
+          "--conf": 0.5,
+          "--fall-threshold": 0.4,
+          "--angle-threshold": 45.0
+        }
+      }
+    ],
+    "yolov12n1.pt": [
+      {
+        "experiment_id": 1,
+        "point_type": "factorial",
+        "coded_levels": {
+          "conf": -1,
+          "fall_threshold": -1,
+          "angle_threshold": -1
+        },
+        "actual_levels": {
+          "conf": 0.3,
+          "fall_threshold": 0.2,
+          "angle_threshold": 30.0
+        },
+        "cli_args": {
+          "--conf": 0.3,
+          "--fall-threshold": 0.2,
+          "--angle-threshold": 30.0
+        }
+      },
+      {
+        "experiment_id": 2,
+        "point_type": "factorial",
+        "coded_levels": {
+          "conf": -1,
+          "fall_threshold": -1,
+          "angle_threshold": 1
+        },
+        "actual_levels": {
+          "conf": 0.3,
+          "fall_threshold": 0.2,
+          "angle_threshold": 60.0
+        },
+        "cli_args": {
+          "--conf": 0.3,
+          "--fall-threshold": 0.2,
+          "--angle-threshold": 60.0
+        }
+      },
+      {
+        "experiment_id": 3,
+        "point_type": "factorial",
+        "coded_levels": {
+          "conf": -1,
+          "fall_threshold": 1,
+          "angle_threshold": -1
+        },
+        "actual_levels": {
+          "conf": 0.3,
+          "fall_threshold": 0.6,
+          "angle_threshold": 30.0
+        },
+        "cli_args": {
+          "--conf": 0.3,
+          "--fall-threshold": 0.6,
+          "--angle-threshold": 30.0
+        }
+      },
+      {
+        "experiment_id": 4,
+        "point_type": "factorial",
+        "coded_levels": {
+          "conf": -1,
+          "fall_threshold": 1,
+          "angle_threshold": 1
+        },
+        "actual_levels": {
+          "conf": 0.3,
+          "fall_threshold": 0.6,
+          "angle_threshold": 60.0
+        },
+        "cli_args": {
+          "--conf": 0.3,
+          "--fall-threshold": 0.6,
+          "--angle-threshold": 60.0
+        }
+      },
+      {
+        "experiment_id": 5,
+        "point_type": "factorial",
+        "coded_levels": {
+          "conf": 1,
+          "fall_threshold": -1,
+          "angle_threshold": -1
+        },
+        "actual_levels": {
+          "conf": 0.7,
+          "fall_threshold": 0.2,
+          "angle_threshold": 30.0
+        },
+        "cli_args": {
+          "--conf": 0.7,
+          "--fall-threshold": 0.2,
+          "--angle-threshold": 30.0
+        }
+      },
+      {
+        "experiment_id": 6,
+        "point_type": "factorial",
+        "coded_levels": {
+          "conf": 1,
+          "fall_threshold": -1,
+          "angle_threshold": 1
+        },
+        "actual_levels": {
+          "conf": 0.7,
+          "fall_threshold": 0.2,
+          "angle_threshold": 60.0
+        },
+        "cli_args": {
+          "--conf": 0.7,
+          "--fall-threshold": 0.2,
+          "--angle-threshold": 60.0
+        }
+      },
+      {
+        "experiment_id": 7,
+        "point_type": "factorial",
+        "coded_levels": {
+          "conf": 1,
+          "fall_threshold": 1,
+          "angle_threshold": -1
+        },
+        "actual_levels": {
+          "conf": 0.7,
+          "fall_threshold": 0.6,
+          "angle_threshold": 30.0
+        },
+        "cli_args": {
+          "--conf": 0.7,
+          "--fall-threshold": 0.6,
+          "--angle-threshold": 30.0
+        }
+      },
+      {
+        "experiment_id": 8,
+        "point_type": "factorial",
+        "coded_levels": {
+          "conf": 1,
+          "fall_threshold": 1,
+          "angle_threshold": 1
+        },
+        "actual_levels": {
+          "conf": 0.7,
+          "fall_threshold": 0.6,
+          "angle_threshold": 60.0
+        },
+        "cli_args": {
+          "--conf": 0.7,
+          "--fall-threshold": 0.6,
+          "--angle-threshold": 60.0
+        }
+      },
+      {
+        "experiment_id": 9,
+        "point_type": "axial",
+        "coded_levels": {
+          "conf": -1.1,
+          "fall_threshold": 0.0,
+          "angle_threshold": 0.0
+        },
+        "actual_levels": {
+          "conf": 0.28,
+          "fall_threshold": 0.4,
+          "angle_threshold": 45.0
+        },
+        "cli_args": {
+          "--conf": 0.28,
+          "--fall-threshold": 0.4,
+          "--angle-threshold": 45.0
+        }
+      },
+      {
+        "experiment_id": 10,
+        "point_type": "axial",
+        "coded_levels": {
+          "conf": 1.1,
+          "fall_threshold": 0.0,
+          "angle_threshold": 0.0
+        },
+        "actual_levels": {
+          "conf": 0.72,
+          "fall_threshold": 0.4,
+          "angle_threshold": 45.0
+        },
+        "cli_args": {
+          "--conf": 0.72,
+          "--fall-threshold": 0.4,
+          "--angle-threshold": 45.0
+        }
+      },
+      {
+        "experiment_id": 11,
+        "point_type": "axial",
+        "coded_levels": {
+          "conf": 0.0,
+          "fall_threshold": -1.1,
+          "angle_threshold": 0.0
+        },
+        "actual_levels": {
+          "conf": 0.5,
+          "fall_threshold": 0.18,
+          "angle_threshold": 45.0
+        },
+        "cli_args": {
+          "--conf": 0.5,
+          "--fall-threshold": 0.18,
+          "--angle-threshold": 45.0
+        }
+      },
+      {
+        "experiment_id": 12,
+        "point_type": "axial",
+        "coded_levels": {
+          "conf": 0.0,
+          "fall_threshold": 1.1,
+          "angle_threshold": 0.0
+        },
+        "actual_levels": {
+          "conf": 0.5,
+          "fall_threshold": 0.62,
+          "angle_threshold": 45.0
+        },
+        "cli_args": {
+          "--conf": 0.5,
+          "--fall-threshold": 0.62,
+          "--angle-threshold": 45.0
+        }
+      },
+      {
+        "experiment_id": 13,
+        "point_type": "axial",
+        "coded_levels": {
+          "conf": 0.0,
+          "fall_threshold": 0.0,
+          "angle_threshold": -1.1
+        },
+        "actual_levels": {
+          "conf": 0.5,
+          "fall_threshold": 0.4,
+          "angle_threshold": 28.5
+        },
+        "cli_args": {
+          "--conf": 0.5,
+          "--fall-threshold": 0.4,
+          "--angle-threshold": 28.5
+        }
+      },
+      {
+        "experiment_id": 14,
+        "point_type": "axial",
+        "coded_levels": {
+          "conf": 0.0,
+          "fall_threshold": 0.0,
+          "angle_threshold": 1.1
+        },
+        "actual_levels": {
+          "conf": 0.5,
+          "fall_threshold": 0.4,
+          "angle_threshold": 61.5
+        },
+        "cli_args": {
+          "--conf": 0.5,
+          "--fall-threshold": 0.4,
+          "--angle-threshold": 61.5
+        }
+      },
+      {
+        "experiment_id": 15,
+        "point_type": "center",
+        "coded_levels": {
+          "conf": 0.0,
+          "fall_threshold": 0.0,
+          "angle_threshold": 0.0
+        },
+        "actual_levels": {
+          "conf": 0.5,
+          "fall_threshold": 0.4,
+          "angle_threshold": 45.0
+        },
+        "cli_args": {
+          "--conf": 0.5,
+          "--fall-threshold": 0.4,
+          "--angle-threshold": 45.0
+        }
+      },
+      {
+        "experiment_id": 16,
+        "point_type": "center",
+        "coded_levels": {
+          "conf": 0.0,
+          "fall_threshold": 0.0,
+          "angle_threshold": 0.0
+        },
+        "actual_levels": {
+          "conf": 0.5,
+          "fall_threshold": 0.4,
+          "angle_threshold": 45.0
+        },
+        "cli_args": {
+          "--conf": 0.5,
+          "--fall-threshold": 0.4,
+          "--angle-threshold": 45.0
+        }
+      },
+      {
+        "experiment_id": 17,
+        "point_type": "center",
+        "coded_levels": {
+          "conf": 0.0,
+          "fall_threshold": 0.0,
+          "angle_threshold": 0.0
+        },
+        "actual_levels": {
+          "conf": 0.5,
+          "fall_threshold": 0.4,
+          "angle_threshold": 45.0
+        },
+        "cli_args": {
+          "--conf": 0.5,
+          "--fall-threshold": 0.4,
+          "--angle-threshold": 45.0
+        }
+      }
+    ],
+    "yolov8n.pt": [
+      {
+        "experiment_id": 1,
+        "point_type": "factorial",
+        "coded_levels": {
+          "conf": -1,
+          "fall_threshold": -1,
+          "angle_threshold": -1
+        },
+        "actual_levels": {
+          "conf": 0.3,
+          "fall_threshold": 0.2,
+          "angle_threshold": 30.0
+        },
+        "cli_args": {
+          "--conf": 0.3,
+          "--fall-threshold": 0.2,
+          "--angle-threshold": 30.0
+        }
+      },
+      {
+        "experiment_id": 2,
+        "point_type": "factorial",
+        "coded_levels": {
+          "conf": -1,
+          "fall_threshold": -1,
+          "angle_threshold": 1
+        },
+        "actual_levels": {
+          "conf": 0.3,
+          "fall_threshold": 0.2,
+          "angle_threshold": 60.0
+        },
+        "cli_args": {
+          "--conf": 0.3,
+          "--fall-threshold": 0.2,
+          "--angle-threshold": 60.0
+        }
+      },
+      {
+        "experiment_id": 3,
+        "point_type": "factorial",
+        "coded_levels": {
+          "conf": -1,
+          "fall_threshold": 1,
+          "angle_threshold": -1
+        },
+        "actual_levels": {
+          "conf": 0.3,
+          "fall_threshold": 0.6,
+          "angle_threshold": 30.0
+        },
+        "cli_args": {
+          "--conf": 0.3,
+          "--fall-threshold": 0.6,
+          "--angle-threshold": 30.0
+        }
+      },
+      {
+        "experiment_id": 4,
+        "point_type": "factorial",
+        "coded_levels": {
+          "conf": -1,
+          "fall_threshold": 1,
+          "angle_threshold": 1
+        },
+        "actual_levels": {
+          "conf": 0.3,
+          "fall_threshold": 0.6,
+          "angle_threshold": 60.0
+        },
+        "cli_args": {
+          "--conf": 0.3,
+          "--fall-threshold": 0.6,
+          "--angle-threshold": 60.0
+        }
+      },
+      {
+        "experiment_id": 5,
+        "point_type": "factorial",
+        "coded_levels": {
+          "conf": 1,
+          "fall_threshold": -1,
+          "angle_threshold": -1
+        },
+        "actual_levels": {
+          "conf": 0.7,
+          "fall_threshold": 0.2,
+          "angle_threshold": 30.0
+        },
+        "cli_args": {
+          "--conf": 0.7,
+          "--fall-threshold": 0.2,
+          "--angle-threshold": 30.0
+        }
+      },
+      {
+        "experiment_id": 6,
+        "point_type": "factorial",
+        "coded_levels": {
+          "conf": 1,
+          "fall_threshold": -1,
+          "angle_threshold": 1
+        },
+        "actual_levels": {
+          "conf": 0.7,
+          "fall_threshold": 0.2,
+          "angle_threshold": 60.0
+        },
+        "cli_args": {
+          "--conf": 0.7,
+          "--fall-threshold": 0.2,
+          "--angle-threshold": 60.0
+        }
+      },
+      {
+        "experiment_id": 7,
+        "point_type": "factorial",
+        "coded_levels": {
+          "conf": 1,
+          "fall_threshold": 1,
+          "angle_threshold": -1
+        },
+        "actual_levels": {
+          "conf": 0.7,
+          "fall_threshold": 0.6,
+          "angle_threshold": 30.0
+        },
+        "cli_args": {
+          "--conf": 0.7,
+          "--fall-threshold": 0.6,
+          "--angle-threshold": 30.0
+        }
+      },
+      {
+        "experiment_id": 8,
+        "point_type": "factorial",
+        "coded_levels": {
+          "conf": 1,
+          "fall_threshold": 1,
+          "angle_threshold": 1
+        },
+        "actual_levels": {
+          "conf": 0.7,
+          "fall_threshold": 0.6,
+          "angle_threshold": 60.0
+        },
+        "cli_args": {
+          "--conf": 0.7,
+          "--fall-threshold": 0.6,
+          "--angle-threshold": 60.0
+        }
+      },
+      {
+        "experiment_id": 9,
+        "point_type": "axial",
+        "coded_levels": {
+          "conf": -1.1,
+          "fall_threshold": 0.0,
+          "angle_threshold": 0.0
+        },
+        "actual_levels": {
+          "conf": 0.28,
+          "fall_threshold": 0.4,
+          "angle_threshold": 45.0
+        },
+        "cli_args": {
+          "--conf": 0.28,
+          "--fall-threshold": 0.4,
+          "--angle-threshold": 45.0
+        }
+      },
+      {
+        "experiment_id": 10,
+        "point_type": "axial",
+        "coded_levels": {
+          "conf": 1.1,
+          "fall_threshold": 0.0,
+          "angle_threshold": 0.0
+        },
+        "actual_levels": {
+          "conf": 0.72,
+          "fall_threshold": 0.4,
+          "angle_threshold": 45.0
+        },
+        "cli_args": {
+          "--conf": 0.72,
+          "--fall-threshold": 0.4,
+          "--angle-threshold": 45.0
+        }
+      },
+      {
+        "experiment_id": 11,
+        "point_type": "axial",
+        "coded_levels": {
+          "conf": 0.0,
+          "fall_threshold": -1.1,
+          "angle_threshold": 0.0
+        },
+        "actual_levels": {
+          "conf": 0.5,
+          "fall_threshold": 0.18,
+          "angle_threshold": 45.0
+        },
+        "cli_args": {
+          "--conf": 0.5,
+          "--fall-threshold": 0.18,
+          "--angle-threshold": 45.0
+        }
+      },
+      {
+        "experiment_id": 12,
+        "point_type": "axial",
+        "coded_levels": {
+          "conf": 0.0,
+          "fall_threshold": 1.1,
+          "angle_threshold": 0.0
+        },
+        "actual_levels": {
+          "conf": 0.5,
+          "fall_threshold": 0.62,
+          "angle_threshold": 45.0
+        },
+        "cli_args": {
+          "--conf": 0.5,
+          "--fall-threshold": 0.62,
+          "--angle-threshold": 45.0
+        }
+      },
+      {
+        "experiment_id": 13,
+        "point_type": "axial",
+        "coded_levels": {
+          "conf": 0.0,
+          "fall_threshold": 0.0,
+          "angle_threshold": -1.1
+        },
+        "actual_levels": {
+          "conf": 0.5,
+          "fall_threshold": 0.4,
+          "angle_threshold": 28.5
+        },
+        "cli_args": {
+          "--conf": 0.5,
+          "--fall-threshold": 0.4,
+          "--angle-threshold": 28.5
+        }
+      },
+      {
+        "experiment_id": 14,
+        "point_type": "axial",
+        "coded_levels": {
+          "conf": 0.0,
+          "fall_threshold": 0.0,
+          "angle_threshold": 1.1
+        },
+        "actual_levels": {
+          "conf": 0.5,
+          "fall_threshold": 0.4,
+          "angle_threshold": 61.5
+        },
+        "cli_args": {
+          "--conf": 0.5,
+          "--fall-threshold": 0.4,
+          "--angle-threshold": 61.5
+        }
+      },
+      {
+        "experiment_id": 15,
+        "point_type": "center",
+        "coded_levels": {
+          "conf": 0.0,
+          "fall_threshold": 0.0,
+          "angle_threshold": 0.0
+        },
+        "actual_levels": {
+          "conf": 0.5,
+          "fall_threshold": 0.4,
+          "angle_threshold": 45.0
+        },
+        "cli_args": {
+          "--conf": 0.5,
+          "--fall-threshold": 0.4,
+          "--angle-threshold": 45.0
+        }
+      },
+      {
+        "experiment_id": 16,
+        "point_type": "center",
+        "coded_levels": {
+          "conf": 0.0,
+          "fall_threshold": 0.0,
+          "angle_threshold": 0.0
+        },
+        "actual_levels": {
+          "conf": 0.5,
+          "fall_threshold": 0.4,
+          "angle_threshold": 45.0
+        },
+        "cli_args": {
+          "--conf": 0.5,
+          "--fall-threshold": 0.4,
+          "--angle-threshold": 45.0
+        }
+      },
+      {
+        "experiment_id": 17,
+        "point_type": "center",
+        "coded_levels": {
+          "conf": 0.0,
+          "fall_threshold": 0.0,
+          "angle_threshold": 0.0
+        },
+        "actual_levels": {
+          "conf": 0.5,
+          "fall_threshold": 0.4,
+          "angle_threshold": 45.0
+        },
+        "cli_args": {
+          "--conf": 0.5,
+          "--fall-threshold": 0.4,
+          "--angle-threshold": 45.0
+        }
+      }
+    ]
+  }
+}
