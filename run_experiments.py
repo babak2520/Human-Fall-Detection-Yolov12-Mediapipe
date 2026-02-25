@@ -61,7 +61,7 @@ def get_ground_truth(video_filename: str) -> bool:
 
 
 def run_single_experiment(model: str, cli_args: dict, video_path: str,
-                          timeout: int = 300) -> int:
+                          timeout: int = 3000) -> int:
     """Run fall_detection_system.py once and return the total_falls count.
 
     Parameters

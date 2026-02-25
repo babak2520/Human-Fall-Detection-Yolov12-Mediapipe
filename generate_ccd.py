@@ -56,10 +56,10 @@ FACTORS = {
 
 # YOLO model files in the project root
 MODELS = [
-    #"yolov12m.pt",
-    "yolov12n.pt",
-    "yolov12n1.pt",
-    "yolov8n.pt",
+    "yolov12m.pt",
+    #"yolov12n.pt",
+    #"yolov12n1.pt",
+    #"yolov8n.pt",
 ]
 
 # ============================================================
