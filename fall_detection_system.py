@@ -40,6 +40,12 @@ def parse_arguments():
     parser.add_argument('--output-dir', type=str, default='fall_snapshots',
                       help='Directory to save fall snapshots (if --save-falls is used)')
     
+    # ST-GCN options
+    parser.add_argument('--use-stgcn', action='store_true',
+                      help='Use ST-GCN model for fall detection instead of rule-based')
+    parser.add_argument('--stgcn-weights', type=str, default=None,
+                      help='Path to trained ST-GCN weights (.pth file)')
+    
     return parser.parse_args()
 
 def run_dashboard_mode(args):
@@ -75,7 +81,9 @@ def run_cli_mode(args):
     # Initialize fall detector
     fall_detector = FallDetector(
         model_path=args.model,
-        confidence=args.conf
+        confidence=args.conf,
+        use_stgcn=args.use_stgcn,
+        stgcn_weights=args.stgcn_weights,
     )
     
     # Set detection parameters if provided

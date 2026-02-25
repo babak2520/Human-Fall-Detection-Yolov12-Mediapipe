@@ -7,13 +7,17 @@ import time
 import torch
 import os
 
+from models.stgcn.action_estimator import ActionEstimator
+
 class FallDetector:
-    def __init__(self, model_path='yolov12n1.pt', confidence=0.5):
+    def __init__(self, model_path='yolov12n1.pt', confidence=0.5, use_stgcn=False, stgcn_weights=None):
         """Initialize the fall detection system.
         
         Args:
             model_path (str): Path to the YOLOv12 model file (default: 'yolov12n1.pt')
             confidence (float): Detection confidence threshold (0-1)
+            use_stgcn (bool): Use ST-GCN model for fall detection instead of rule-based
+            stgcn_weights (str): Path to trained ST-GCN weights (.pth file)
         """
         # First verify CUDA is working
         try:
@@ -109,6 +113,17 @@ class FallDetector:
         # 0: nose, 11-12: shoulders, 13-14: elbows, 15-16: wrists,
         # 23-24: hips, 25-26: knees, 27-28: ankles
         self.key_landmark_indices = [0, 11, 12, 13, 14, 15, 16, 23, 24, 25, 26, 27, 28]
+        
+        # ST-GCN action recognition (optional)
+        self.use_stgcn = use_stgcn
+        self.action_estimator = None
+        if self.use_stgcn:
+            print("[FallDetector] Initializing ST-GCN action estimator...")
+            self.action_estimator = ActionEstimator(
+                weights_path=stgcn_weights,
+                device=self.device,
+            )
+            print("[FallDetector] ST-GCN action estimator ready.")
         
     def detect_person(self, frame):
         """Detect persons in the frame using YOLO."""
@@ -370,12 +385,12 @@ class FallDetector:
         for fall_type in self.fall_types:
             self.fall_types[fall_type] = False
             
-        if not pose_features or len(self.prev_poses) < 5:
+        if not pose_features or len(self.prev_poses) < 1:
             return None
             
         # Extract current and previous features
         current = pose_features
-        prev = self.prev_poses[-5] if len(self.prev_poses) >= 5 else None
+        prev = self.prev_poses[-1] if len(self.prev_poses) >= 1 else None
         
         if not prev:
             return None
@@ -465,10 +480,10 @@ class FallDetector:
             fall_criteria_met += 1
         
         # Only check for motion if we have enough history
-        if len(self.prev_poses) > 5:
+        if len(self.prev_poses) > 1:
             # Get key poses to analyze movement
             current_features = pose_features
-            prev_features = self.prev_poses[-6]  # 5 frames back
+            prev_features = self.prev_poses[-2]  # 1 frame back
             
             # Criterion 3: Significant vertical movement (falling down)
             if current_features["mid_shoulder_y"] - prev_features["mid_shoulder_y"] > self.fall_threshold:
@@ -564,12 +579,29 @@ class FallDetector:
         for person_id, landmarks, pose_features, (x1, y1, x2, y2) in pose_data:
             # Track if this specific person has fallen in this frame
             person_has_fallen = False
+            detected_fall_type = None
+            stgcn_action_label = None
             
             # Check if this person is already marked as fallen from a previous frame
             if person_id in self.fallen_person_ids:
                 person_has_fallen = True
-            # Check for new fall if not already marked
-            elif landmarks and pose_features:
+
+            # ---- ST-GCN path ----
+            elif self.use_stgcn and self.action_estimator is not None and landmarks:
+                # Feed this frame's landmarks into the per-person buffer
+                self.action_estimator.add_frame(person_id, landmarks)
+
+                # Run inference once we have enough frames
+                if self.action_estimator.is_ready(person_id):
+                    result = self.action_estimator.predict(person_id)
+                    if result is not None:
+                        stgcn_action_label = result['action']
+                        if result['is_fall']:
+                            person_has_fallen = True
+                            detected_fall_type = "fall_down"
+
+            # ---- Rule-based path (original) ----
+            elif not self.use_stgcn and landmarks and pose_features:
                 # Calculate angle from pose features
                 angle = pose_features.get("angle", 0)
                     
@@ -582,35 +614,52 @@ class FallDetector:
                         person_has_fallen = True
                         
                         # Determine fall type
-                        fall_type = None
                         for ft, is_active in self.fall_types.items():
                             if is_active:
-                                fall_type = ft
+                                detected_fall_type = ft
                                 break
                             
                         # If no fall type was determined, use a default
-                        if not fall_type:
-                            fall_type = "slip_and_fall"
+                        if not detected_fall_type:
+                            detected_fall_type = "slip_and_fall"
+
+            # ---- Common fall bookkeeping ----
+            if person_has_fallen and person_id not in (fall_data.get("fallen_ids") or []):
+                if person_id is not None and person_id not in fall_data["fallen_ids"]:
+                    fall_data["fallen_ids"].append(person_id)
+                    self.fallen_person_ids.add(person_id)
                     
-                        # Update fall data
-                        if person_id is not None and person_id not in fall_data["fallen_ids"]:
-                            fall_data["fallen_ids"].append(person_id)
-                            self.fallen_person_ids.add(person_id)
-                            
-                        fall_data["fall_detected"] = True
-                        fall_data["fall_type"] = fall_type
-                        falls_detected = True
-                        
-                        # Add visual indication
-                        cv2.putText(
-                            output_frame,
-                            f"FALL DETECTED: {fall_type}",
-                            (x1, y1 - 30),
-                            cv2.FONT_HERSHEY_SIMPLEX,
-                            0.9,
-                            (0, 0, 255),
-                            2
-                        )
+                fall_data["fall_detected"] = True
+                fall_data["fall_type"] = detected_fall_type
+                falls_detected = True
+                
+                # Build label text
+                if self.use_stgcn and stgcn_action_label:
+                    label_text = f"FALL DETECTED (ST-GCN: {stgcn_action_label})"
+                else:
+                    label_text = f"FALL DETECTED: {detected_fall_type}"
+
+                cv2.putText(
+                    output_frame,
+                    label_text,
+                    (x1, y1 - 30),
+                    cv2.FONT_HERSHEY_SIMPLEX,
+                    0.9,
+                    (0, 0, 255),
+                    2
+                )
+
+            # Show ST-GCN action label for non-fall actions (if available)
+            elif self.use_stgcn and stgcn_action_label and not person_has_fallen:
+                cv2.putText(
+                    output_frame,
+                    f"Action: {stgcn_action_label}",
+                    (x1, y1 - 10),
+                    cv2.FONT_HERSHEY_SIMPLEX,
+                    0.6,
+                    (0, 255, 0),
+                    2
+                )
             
             # Draw key landmarks if enabled (after determining fall status)
             if landmarks:
@@ -731,5 +780,8 @@ class FallDetector:
         
         for person_id in ids_to_remove:
             del self.person_trackers[person_id]
+            # Also clear ST-GCN buffer for this person
+            if self.use_stgcn and self.action_estimator is not None:
+                self.action_estimator.clear_person(person_id)
         
         return box_to_id 

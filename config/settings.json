@@ -2,7 +2,7 @@
     "model_path": "yolov12n1.pt",
     "confidence": 0.5,
     "fall_threshold": 0.12,
-    "angle_threshold": 15,
+    "angle_threshold": 45,
     "sound_alerts": true,
     "auto_save_falls": true,
     "output_dir": "fall_snapshots",
