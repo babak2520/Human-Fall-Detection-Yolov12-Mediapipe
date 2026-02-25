@@ -156,6 +156,7 @@ class FallDetectionDashboard(QMainWindow):
         self.video_source = None
         self.video_paused = False
         self.detection_enabled = True
+        self.show_landmarks = False  # Toggle for showing pose landmarks
         self.fall_detector = None
         self.cap = None
         
@@ -312,6 +313,32 @@ class FallDetectionDashboard(QMainWindow):
         self.settings_btn.clicked.connect(lambda: self.tab_widget.setCurrentIndex(1))
         self.settings_btn.setMinimumWidth(100)
         buttons_layout.addWidget(self.settings_btn)
+        
+        # Show Landmarks toggle button
+        self.show_landmarks_btn = QPushButton("Show Landmarks")
+        self.show_landmarks_btn.setCheckable(True)
+        self.show_landmarks_btn.setChecked(False)
+        self.show_landmarks_btn.clicked.connect(self.toggle_landmarks)
+        self.show_landmarks_btn.setMinimumWidth(130)
+        self.show_landmarks_btn.setStyleSheet("""
+            QPushButton {
+                background-color: #6c757d;
+                color: white;
+                border: none;
+                padding: 8px 15px;
+                border-radius: 4px;
+            }
+            QPushButton:hover {
+                background-color: #5a6268;
+            }
+            QPushButton:checked {
+                background-color: #28a745;
+            }
+            QPushButton:checked:hover {
+                background-color: #218838;
+            }
+        """)
+        buttons_layout.addWidget(self.show_landmarks_btn)
         
         buttons_layout.addStretch(1)
         controls_layout.addLayout(buttons_layout)
@@ -759,6 +786,22 @@ class FallDetectionDashboard(QMainWindow):
             self.pause_resume_btn.setText("Resume")
             self.status_bar.showMessage("Paused")
     
+    def toggle_landmarks(self):
+        """Toggle the display of pose landmarks on the video feed."""
+        self.show_landmarks = self.show_landmarks_btn.isChecked()
+        
+        # Update the fall detector's landmark display setting if it exists
+        if self.fall_detector:
+            self.fall_detector.show_landmarks = self.show_landmarks
+        
+        # Update button text to reflect state
+        if self.show_landmarks:
+            self.show_landmarks_btn.setText("Hide Landmarks")
+            self.status_bar.showMessage("Pose landmarks enabled - Green: Normal, Red: Fall Detected")
+        else:
+            self.show_landmarks_btn.setText("Show Landmarks")
+            self.status_bar.showMessage("Pose landmarks disabled")
+    
     def start_detection(self):
         """Initialize and start the fall detection process."""
         try:
@@ -772,6 +815,9 @@ class FallDetectionDashboard(QMainWindow):
                 # Set detection parameters
                 self.fall_detector.fall_threshold = self.config["fall_threshold"]
                 self.fall_detector.angle_threshold = self.config["angle_threshold"]
+            
+            # Sync landmark display setting with fall detector
+            self.fall_detector.show_landmarks = self.show_landmarks
             
             # Open video source
             if self.video_source:

@@ -100,6 +100,16 @@ class FallDetector:
         self.person_trackers = {}  # Dictionary to track persons across frames {id: tracker_info}
         self.fallen_person_ids = set()  # Set of IDs of persons who are currently fallen
         
+        # Landmark visualization settings
+        self.show_landmarks = False  # Toggle for showing pose landmarks
+        self.landmark_color_normal = (0, 255, 0)  # Green for normal
+        self.landmark_color_fall = (0, 0, 255)  # Red for fall detected
+        
+        # Key landmark indices for visualization (MediaPipe pose landmarks)
+        # 0: nose, 11-12: shoulders, 13-14: elbows, 15-16: wrists,
+        # 23-24: hips, 25-26: knees, 27-28: ankles
+        self.key_landmark_indices = [0, 11, 12, 13, 14, 15, 16, 23, 24, 25, 26, 27, 28]
+        
     def detect_person(self, frame):
         """Detect persons in the frame using YOLO."""
         # Process frame with explicit device
@@ -131,6 +141,68 @@ class FallDetector:
             import traceback
             traceback.print_exc()
             return []
+    
+    def draw_key_landmarks(self, frame, landmarks, person_box, is_fall=False):
+        """Draw key pose landmarks on the frame.
+        
+        Args:
+            frame: Output frame to draw on
+            landmarks: List of pose landmarks (normalized coordinates)
+            person_box: Person bounding box (x1, y1, x2, y2)
+            is_fall: Whether a fall is detected (changes color to red)
+        """
+        if not self.show_landmarks or not landmarks:
+            return
+            
+        x1, y1, x2, y2 = person_box
+        h, w = y2 - y1, x2 - x1
+        
+        # Choose color based on fall status
+        color = self.landmark_color_fall if is_fall else self.landmark_color_normal
+        
+        # Draw key landmark points as circles
+        for idx in self.key_landmark_indices:
+            if idx < len(landmarks):
+                lm = landmarks[idx]
+                # Convert normalized coordinates to pixel coordinates within the bounding box
+                px = int(lm[0] * w) + x1
+                py = int(lm[1] * h) + y1
+                
+                # Check visibility (if available)
+                visibility = lm[3] if len(lm) > 3 else 1.0
+                if visibility > 0.5:
+                    # Draw filled circle for the landmark
+                    cv2.circle(frame, (px, py), 8, color, -1)
+                    # Draw outer ring for better visibility
+                    cv2.circle(frame, (px, py), 8, (255, 255, 255), 2)
+        
+        # Draw connections between key landmarks for skeleton visualization
+        connections = [
+            (11, 12),  # shoulders
+            (11, 13), (13, 15),  # left arm
+            (12, 14), (14, 16),  # right arm
+            (11, 23), (12, 24),  # torso
+            (23, 24),  # hips
+            (23, 25), (25, 27),  # left leg
+            (24, 26), (26, 28),  # right leg
+        ]
+        
+        for start_idx, end_idx in connections:
+            if start_idx < len(landmarks) and end_idx < len(landmarks):
+                start_lm = landmarks[start_idx]
+                end_lm = landmarks[end_idx]
+                
+                # Check visibility
+                start_vis = start_lm[3] if len(start_lm) > 3 else 1.0
+                end_vis = end_lm[3] if len(end_lm) > 3 else 1.0
+                
+                if start_vis > 0.5 and end_vis > 0.5:
+                    start_px = int(start_lm[0] * w) + x1
+                    start_py = int(start_lm[1] * h) + y1
+                    end_px = int(end_lm[0] * w) + x1
+                    end_py = int(end_lm[1] * h) + y1
+                    
+                    cv2.line(frame, (start_px, start_py), (end_px, end_py), color, 3)
     
     def analyze_pose(self, frame, person_box):
         """Analyze pose for a detected person using MediaPipe.
@@ -490,54 +562,59 @@ class FallDetector:
         
         # Add better fall detection using collected pose data
         for person_id, landmarks, pose_features, (x1, y1, x2, y2) in pose_data:
-            # Skip if this person is already marked as fallen
+            # Track if this specific person has fallen in this frame
+            person_has_fallen = False
+            
+            # Check if this person is already marked as fallen from a previous frame
             if person_id in self.fallen_person_ids:
-                continue
-                
-            # Skip if no valid pose data
-            if not landmarks or not pose_features:
-                continue
-                
-            # Calculate angle from pose features
-            angle = pose_features.get("angle", 0)
-                
-            # Stricter fall detection criteria
-            if abs(angle) >= (self.angle_threshold + 10):  # More horizontal posture
-                # Additional checks like aspect ratio
-                aspect_ratio = pose_features.get("aspect_ratio", 2.0)
-                if aspect_ratio < 1.5:  # More horizontal than vertical
-                    # This is likely a real fall
+                person_has_fallen = True
+            # Check for new fall if not already marked
+            elif landmarks and pose_features:
+                # Calculate angle from pose features
+                angle = pose_features.get("angle", 0)
                     
-                    # Determine fall type
-                    fall_type = None
-                    for ft, is_active in self.fall_types.items():
-                        if is_active:
-                            fall_type = ft
-                            break
-                            
-                    # If no fall type was determined, use a default
-                    if not fall_type:
-                        fall_type = "slip_and_fall"
-                    
-                    # Update fall data
-                    if person_id is not None and person_id not in fall_data["fallen_ids"]:
-                        fall_data["fallen_ids"].append(person_id)
-                        self.fallen_person_ids.add(person_id)
+                # Stricter fall detection criteria
+                if abs(angle) >= (self.angle_threshold + 10):  # More horizontal posture
+                    # Additional checks like aspect ratio
+                    aspect_ratio = pose_features.get("aspect_ratio", 2.0)
+                    if aspect_ratio < 1.5:  # More horizontal than vertical
+                        # This is likely a real fall
+                        person_has_fallen = True
                         
-                    fall_data["fall_detected"] = True
-                    fall_data["fall_type"] = fall_type
-                    falls_detected = True
+                        # Determine fall type
+                        fall_type = None
+                        for ft, is_active in self.fall_types.items():
+                            if is_active:
+                                fall_type = ft
+                                break
+                            
+                        # If no fall type was determined, use a default
+                        if not fall_type:
+                            fall_type = "slip_and_fall"
                     
-                    # Add visual indication
-                    cv2.putText(
-                        output_frame,
-                        f"FALL DETECTED: {fall_type}",
-                        (x1, y1 - 30),
-                        cv2.FONT_HERSHEY_SIMPLEX,
-                        0.9,
-                        (0, 0, 255),
-                        2
-                    )
+                        # Update fall data
+                        if person_id is not None and person_id not in fall_data["fallen_ids"]:
+                            fall_data["fallen_ids"].append(person_id)
+                            self.fallen_person_ids.add(person_id)
+                            
+                        fall_data["fall_detected"] = True
+                        fall_data["fall_type"] = fall_type
+                        falls_detected = True
+                        
+                        # Add visual indication
+                        cv2.putText(
+                            output_frame,
+                            f"FALL DETECTED: {fall_type}",
+                            (x1, y1 - 30),
+                            cv2.FONT_HERSHEY_SIMPLEX,
+                            0.9,
+                            (0, 0, 255),
+                            2
+                        )
+            
+            # Draw key landmarks if enabled (after determining fall status)
+            if landmarks:
+                self.draw_key_landmarks(output_frame, landmarks, (x1, y1, x2, y2), is_fall=person_has_fallen)
         
         return output_frame, falls_detected, fall_data
     
